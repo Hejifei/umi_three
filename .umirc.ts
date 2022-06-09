@@ -8,4 +8,13 @@ export default defineConfig({
     { path: '/', component: '@/pages/index' },
   ],
   fastRefresh: {},
+  chainWebpack: (config) => {
+    config.module
+      .rule('gltf')
+      .test(/\.(gltf)$/)
+      .use()
+      .loader('url-loader')
+      .options('$')
+      .end();
+  }
 });
