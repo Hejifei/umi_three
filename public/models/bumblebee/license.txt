@@ -1,0 +1,11 @@
+Model Information:
+* title:	Bumblebee
+* source:	https://sketchfab.com/3d-models/bumblebee-8f0c0ad2742c42ec8b92cad2e8d2e073
+* author:	ann55010970637 (https://sketchfab.com/ann55010970637)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Bumblebee" (https://sketchfab.com/3d-models/bumblebee-8f0c0ad2742c42ec8b92cad2e8d2e073) by ann55010970637 (https://sketchfab.com/ann55010970637) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
