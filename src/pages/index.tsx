@@ -15,21 +15,28 @@ import {
   Color,
 } from 'three'
 
-const defaultMap = {
-  x: 50,
-  y: 228,
-  z: 1022,
-}
 const colorAry = [
   "rgb(216, 27, 67)", "rgb(142, 36, 170)", "rgb(81, 45, 168)", "rgb(48, 63, 159)", "rgb(30, 136, 229)", "rgb(0, 137, 123)",
   "rgb(67, 160, 71)", "rgb(251, 192, 45)", "rgb(245, 124, 0)", "rgb(230, 74, 25)", "rgb(233, 30, 78)", "rgb(156, 39, 176)",
   "rgb(0, 0, 0)"] 
-
+//  绿色跑车
+// const defaultMap = {
+//   x: 50,
+//   y: 228,
+//   z: 1022,
+// }
+//  白色小汽车
 // const defaultMap = {
 //   x: 0,
 //   y: 228,
 //   z: 352,
 // }
+//  大黄蜂
+const defaultMap = {
+  x: 0,
+  y: 1,
+  z: 7,
+}
 export default function IndexPage() {
   const [isAutoRotate, setIsAutoRotate] = useState(false)
   const [map, setMap] = useState({...defaultMap})
@@ -142,8 +149,11 @@ export default function IndexPage() {
     if (!cameraRef?.current) {
       return
     }
+    //  添加控制器
     controlsRef.current = new OrbitControls(cameraRef.current, rendererRef.current?.domElement)
+    // 相机向外移动极限
     controlsRef.current.maxPolarAngle = 0.9 * Math.PI / 2
+    //  启用惯性
     controlsRef.current.enableZoom = true
     
     controlsRef.current.addEventListener('change', controlRender)
@@ -176,7 +186,8 @@ export default function IndexPage() {
 
   const init = useCallback(async () => {
     // 将 gltf 模型放在静态资源文件夹public下才能被访问到
-    const gltf = await loadFile('models/low_poly_car/scene.gltf')
+    // const gltf = await loadFile('models/low_poly_car/scene.gltf')
+    const gltf = await loadFile('models/bumblebee/scene.gltf')
     // const gltf = await loadFile('models/concept_car_038__-_public_domain/scene.gltf')
     addScene()
     addCamera()
@@ -204,8 +215,10 @@ export default function IndexPage() {
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '100%',
+        height: '100%',
         color: '#fff',
+        display: 'flex',
+        flexDirection: 'column'
         // backgroundColor: '#fff',
       }}>
         <p>x: {map.x}</p>
@@ -218,8 +231,11 @@ export default function IndexPage() {
         </button>
         <div style={{
           display: 'flex',
+          flexDirection: 'column',
+          width: '20px',
           height: '20px',
-          border: '1px solid #fff'
+          border: '1px solid #fff',
+          flex: 1,
         }}>
           {
             colorAry.map((item, index) => <div
