@@ -7,6 +7,7 @@ export default defineConfig({
   routes: [
     { path: '/', component: '@/pages/index' },
     { path: '/house', component: '@/pages/house/index' },
+    { path: '/battery', component: '@/pages/battery/index' },
   ],
   fastRefresh: {},
   chainWebpack: (config) => {

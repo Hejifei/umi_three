@@ -1,0 +1,11 @@
+Model Information:
+* title:	Yuasa NP1.2-12 1.2 Ah 12V loodaccu
+* source:	https://sketchfab.com/3d-models/yuasa-np12-12-12-ah-12v-loodaccu-8b09ce4c37934a4abeba210203c4c77d
+* author:	Stichting Consortium Beroepsonderwijs (https://sketchfab.com/scb3d)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Yuasa NP1.2-12 1.2 Ah 12V loodaccu" (https://sketchfab.com/3d-models/yuasa-np12-12-12-ah-12v-loodaccu-8b09ce4c37934a4abeba210203c4c77d) by Stichting Consortium Beroepsonderwijs (https://sketchfab.com/scb3d) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

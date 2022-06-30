@@ -18,6 +18,8 @@ import {
   Raycaster,
   Vector2,
   Vector3,
+  AxesHelper,
+  GridHelper,
 } from 'three'
 import gsap from 'gsap'
 import livingRoom from '@/assets/image/livingRoom.jpg'
@@ -323,9 +325,13 @@ export default function House() {
   }, [])
 
   const initContent = useCallback((index = 0) => {
+    //  创建球形几何体
     let sphereGeometry = new SphereGeometry(16, 50, 50)
+    //  对球形几何体网格进行x轴反转,使所有面点向内
     sphereGeometry.scale(16, 16, -16)
+    //  TextureLoader 加载图片
     let texture = new TextureLoader().load(dataList[index].image)
+    //  基础网格材质(MeshBasicMaterial)
     let sphereMaterial = new MeshBasicMaterial({ map: texture })
     const sphere = new Mesh(sphereGeometry, sphereMaterial)
     sphereRef.current = sphere
@@ -483,6 +489,20 @@ export default function House() {
       handleTooltipHide,
       false
     );
+
+    /**
+     * 辅助线坐标轴显示
+     */
+    const axesHelper = new AxesHelper( 400 )
+    sceneRef.current?.add(axesHelper)
+
+    /**
+     * 辅助线网格显示
+     */
+    const size = 800;
+    const divisions = 20
+    const gridHelper = new GridHelper( size, divisions )
+    sceneRef.current?.add( gridHelper )
   }, [])
 
   useEffect(() => {
