@@ -1,0 +1,11 @@
+Model Information:
+* title:	PWS1-30K-NA Energy Storage Inverter
+* source:	https://sketchfab.com/3d-models/pws1-30k-na-energy-storage-inverter-f06a8d980c25473f90d06e6683df8e27
+* author:	gaoran0623 (https://sketchfab.com/gaoran0623)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "PWS1-30K-NA Energy Storage Inverter" (https://sketchfab.com/3d-models/pws1-30k-na-energy-storage-inverter-f06a8d980c25473f90d06e6683df8e27) by gaoran0623 (https://sketchfab.com/gaoran0623) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
