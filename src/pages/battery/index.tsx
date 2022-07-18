@@ -1,6 +1,14 @@
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+  Children,
+} from 'react';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import { DragControls } from 'three/examples/js/controls/DragControls.js';
 import { Water } from 'three/examples/jsm/objects/Water';
 import { Sky } from 'three/examples/jsm/objects/Sky';
 import {
@@ -59,6 +67,7 @@ const defaultMap = {
   z: 7,
 };
 export default function IndexPage() {
+  const [isEditing, setIsEditing] = useState(false);
   const [isAutoRotate, setIsAutoRotate] = useState(false);
   const [map, setMap] = useState({ ...defaultMap });
   const mapRef = useRef({ ...defaultMap });
@@ -104,12 +113,22 @@ export default function IndexPage() {
     [],
   );
 
-  const loadFile = useCallback((url: string): Promise<GLTF> => {
+  const loadFile = useCallback((url: string, name: string): Promise<GLTF> => {
     loaderRef.current = new GLTFLoader(); //引入模型的loader实例
     return new Promise((resolve, reject) => {
       loaderRef.current.load(
         url,
         (gltf) => {
+          let index = 1;
+          gltf.scene.name = name;
+          gltf.scene.traverse((child) => {
+            if (child instanceof Mesh) {
+              //  重置材料
+              child.material.map = null;
+              child.name = `${name}_${index}`;
+              index++;
+            }
+          });
           resolve(gltf);
         },
         ({ loaded, total }) => {
@@ -203,8 +222,6 @@ export default function IndexPage() {
     if (!camera || !raycaster || !scene) {
       return;
     }
-    // camera && (camera.position.y += Math.sin(timer) * .05);
-    // if (this.state.sceneReady) {
     const sizes = {
       width: window.innerWidth,
       height: window.innerHeight,
@@ -239,7 +256,6 @@ export default function IndexPage() {
         element.style.transform = `translateX(${translateX}px) translateY(${translateY}px)`;
       }
     }
-    // }
     if (sceneRef.current && cameraRef.current) {
       rendererRef.current?.render(sceneRef.current, cameraRef.current);
       controlsRef.current?.update();
@@ -273,8 +289,9 @@ export default function IndexPage() {
 
     controlsRef.current.target.set(0, 0, 0);
     controlsRef.current.enableDamping = true;
-    controlsRef.current.enablePan = false;
+    controlsRef.current.enablePan = true; //  是否开启相机平移操作
     controlsRef.current.maxPolarAngle = 1.5;
+    controlsRef.current.panSpeed = 2.0;
     controlsRef.current.minDistance = 50;
     controlsRef.current.maxDistance = 1200;
 
@@ -292,16 +309,32 @@ export default function IndexPage() {
 
   const setCarColor = useCallback((index: number) => {
     const currentColor = new Color(colorAry[index]);
-    sceneRef.current?.traverse((child) => {
+    // 修改某个分组下面某个材料的颜色
+    sceneRef.current?.getObjectByName('inverter_1_0')?.traverse((child) => {
       if ((child as Mesh).isMesh) {
         const name = child.name;
-        // console.log(child.name, {child})
-        if (name.includes('Object_14')) {
-          // if (child.name.includes('body_color')) {
+        if (name.includes('inverter_6')) {
           (child as Mesh).material.color.set(currentColor);
         }
       }
     });
+    // 修改所有的某个材料的颜色
+    // sceneRef.current?.traverse((child) => {
+    //   if ((child as Mesh).isMesh) {
+    //     // inverter_1_0
+    //     console.log({
+    //       child,
+    //       name: child.name,
+    //       xxx: sceneRef.current?.getObjectByName('inverter_1_0'),
+    //     })
+    //     const name = child.name;
+    //     // console.log(child.name, {child})
+    //     if (name.includes('inverter_6')) {
+    //       // if (child.name.includes('body_color')) {
+    //       (child as Mesh).material.color.set(currentColor);
+    //     }
+    //   }
+    // });
   }, []);
 
   const addBatteryAndSolarToGroup = useCallback(
@@ -320,52 +353,65 @@ export default function IndexPage() {
   );
 
   const groupClone = useCallback(async (group: Group) => {
-    //  逆变器模型加载
-    // const inverterGltf = await loadFile('models/inverter/scene.gltf')
-    // inverterGltf.scene.position.x = 1
-    // inverterGltf.scene.position.y = 0.5
-    // inverterGltf.scene.position.z = 0
-    // inverterGltf.scene.scale.set(2, 2, 2)
-
-    // //  光伏板模型加载
-    // const blankGltf = await loadFile('models/blank/scene.gltf')
-    // blankGltf.scene.position.x = 5
-    // blankGltf.scene.rotateX(-Math.PI / 2)
-    // // const groupChildren = group.children
-    // const groupChildren = [
-    //   inverterGltf.scene,
-    //   blankGltf.scene,
-    // ]
-    // console.log({
-    //   groupChildren,
-    //   group,
-    // })
     for (let i = 0; i < 10; i++) {
-      // const groupCloned = new Group()
-      // groupChildren.forEach(child => {
-      //   // groupCloned.add(child.clone())
-      //   // child.material
-      //   groupCloned.add(child.material.clone())
-      // })
-      // groupCloned.position.z = -20 * i
-      // sceneRef.current?.add(groupCloned)
+      const groupChildren = group.children;
 
-      const groupCloned = group.clone();
-      // group.add(blankGltf.scene.clone())
-      // group.add(inverterGltf.scene.clone())
-      groupCloned.position.z = -20 * i;
-      sceneRef.current?.add(groupCloned);
+      const groupCloned1 = new Group();
+      const groupCloned2 = new Group();
+      const groupCloned3 = new Group();
+      const groupCloned4 = new Group();
 
-      const groupCloned4 = groupCloned.clone();
+      groupChildren.forEach((item) => {
+        const itemClone1 = item.clone();
+        itemClone1.name = `${itemClone1.name}_1_${i}`;
+        const itemClone2 = item.clone();
+        itemClone2.name = `${itemClone2.name}_1_${i}`;
+        const itemClone3 = item.clone();
+        itemClone3.name = `${itemClone3.name}_1_${i}`;
+        const itemClone4 = item.clone();
+        itemClone4.name = `${itemClone4.name}_1_${i}`;
+        itemClone1.traverse((child) => {
+          if (child instanceof Mesh) {
+            child.material = child.material.clone();
+          }
+        });
+        groupCloned1.add(itemClone1);
+
+        itemClone2.traverse((child) => {
+          if (child instanceof Mesh) {
+            child.material = child.material.clone();
+          }
+        });
+        groupCloned2.add(itemClone2);
+
+        itemClone3.traverse((child) => {
+          if (child instanceof Mesh) {
+            child.material = child.material.clone();
+          }
+        });
+        groupCloned3.add(itemClone3);
+
+        itemClone4.traverse((child) => {
+          if (child instanceof Mesh) {
+            child.material = child.material.clone();
+          }
+        });
+        groupCloned4.add(itemClone4);
+      });
+
+      groupCloned1.position.z = -20 * i;
+      sceneRef.current?.add(groupCloned1);
+
       groupCloned4.position.x = 50;
+      groupCloned4.position.z = -20 * i;
       sceneRef.current?.add(groupCloned4);
 
-      const groupCloned2 = groupCloned.clone();
       groupCloned2.position.x = -50;
+      groupCloned2.position.z = -20 * i;
       sceneRef.current?.add(groupCloned2);
 
-      const groupCloned3 = groupCloned.clone();
       groupCloned3.position.x = -100;
+      groupCloned3.position.z = -20 * i;
       sceneRef.current?.add(groupCloned3);
     }
   }, []);
@@ -382,11 +428,6 @@ export default function IndexPage() {
     ) {
       return;
     }
-    console.log({
-      e,
-    });
-    // let raycaster = new Raycaster();
-    // let mouse = new Vector2();
     const mouse = mouseRef.current;
     // 将鼠标点击位置的屏幕坐标转成threejs中的标准坐标，以屏幕中心为原点，值的范围为-1到1.
     mouse.x = (e.clientX / element.clientWidth) * 2 - 1;
@@ -394,66 +435,11 @@ export default function IndexPage() {
     // 通过鼠标点的位置和当前相机的矩阵计算出raycaster
     const point = raycasterRef.current.setFromCamera(mouse, cameraRef.current);
     const origin = raycasterRef.current.ray.origin;
-    // console.log({
-    //   point,
-    //   raycaster: raycasterRef.current,
-    //   origin,
-    //   ray: raycasterRef.current.ray,
-    // })
     const camera = cameraRef.current;
     const controls = controlsRef.current;
     if (!camera || !controls) {
       return;
     }
-
-    //  start
-    // const x = e.clientX;//鼠标单击坐标X
-    // const y = e.clientY;//鼠标单击坐标Y
-
-    // // 屏幕坐标转标准设备坐标
-    // const x1 = ( x / window.innerWidth ) * 2 - 1;
-    // const y1 = -( y / window.innerHeight ) * 2 + 1;
-    // //标准设备坐标(z=0.5这个值比较靠经验)
-    // const stdVector = new Vector3(x1, y1, 0.5);
-    // //世界坐标
-    // const worldVector = stdVector.unproject(camera)
-    // console.log({
-    //   worldVector
-    // })
-
-    //  end
-
-    // var vec = new Vector3(); // create once and reuse
-    // var pos = new Vector3(); // create once and reuse
-
-    // vec.set(
-    //     ( event.clientX / window.innerWidth ) * 2 - 1,
-    //     - ( event.clientY / window.innerHeight ) * 2 + 1,
-    //     0.5 );
-
-    // vec.unproject( camera );
-
-    // vec.sub( camera.position ).normalize();
-
-    // var distance = - camera.position.z / vec.z;
-
-    // pos.copy( camera.position ).add( vec.multiplyScalar( distance ) )
-    // console.log({
-    //   pos,
-    // })
-
-    // Animations.animateCamera(
-    //   camera,
-    //   controls,
-    //   // { x: -15, y: 80, z: 60 },
-    //   worldVector,
-    //   // pos,
-    //   { x: 0, y: 0, z: 0 },
-    //   1600,
-    //   () => {
-    //     console.log('complete')
-    //   }
-    // )
 
     // 给点击的第一个添加效果
     const sceneChildren = sceneRef.current?.children;
@@ -467,14 +453,8 @@ export default function IndexPage() {
       // 可以通过遍历实现点击不同mesh触发不同交互，如：
       //  选中第一个射线相交的物体
       let selectedObj = intersects[0].object;
-      console.log({
-        selectedObj,
-        name: selectedObj.name,
-      });
-      if (selectedObj.name.includes('Object_14')) {
-        const objM = sceneRef.current?.getObjectByName('Object_14');
-        selectedObj.material.color.set('red');
-        // selectedObj.material.clone().color.set('red')
+      if (selectedObj.name.includes('inverter_6')) {
+        (selectedObj as Mesh).material.color.set('red');
       }
     }
   }, []);
@@ -608,38 +588,42 @@ export default function IndexPage() {
     });
   }, []);
 
+  const changeEditStatus = useCallback((editAble: boolean) => {
+    if (!controlsRef.current) {
+      return;
+    }
+    controlsRef.current.enableRotate = !editAble; //  是否允许旋转视角
+    setIsEditing(editAble);
+  }, []);
+
   const init = useCallback(async () => {
     // 将 gltf 模型放在静态资源文件夹public下才能被访问到
 
     //  逆变器模型加载
-    const inverterGltf = await loadFile('models/inverter/scene.gltf');
+    const inverterGltf = await loadFile(
+      'models/inverter/scene.gltf',
+      'inverter',
+    );
     inverterGltf.scene.position.x = 1;
     inverterGltf.scene.position.y = 0.5;
     inverterGltf.scene.position.z = 0;
     inverterGltf.scene.scale.set(2, 2, 2);
 
     //  光伏板模型加载
-    const blankGltf = await loadFile('models/blank/scene.gltf');
+    const blankGltf = await loadFile('models/blank/scene.gltf', 'blank');
     blankGltf.scene.position.x = 5;
     blankGltf.scene.rotateX(-Math.PI / 2);
 
     const group = new Group();
     group.add(blankGltf.scene.clone());
     group.add(inverterGltf.scene.clone());
-    console.log(
-      {
-        group,
-      },
-      'init',
-    );
-    // addBatteryAndSolarToGroup(group, inverterGltf, blankGltf)
 
     addClock();
     addScene();
     addCamera();
     addLight();
     setControls();
-    sceneRef.current?.add(group);
+    // sceneRef.current?.add(group);
     groupClone(group);
     addWater();
     addSky();
@@ -722,12 +706,14 @@ export default function IndexPage() {
           color: '#fff',
           display: 'flex',
           flexDirection: 'column',
-          // backgroundColor: '#fff',
         }}
       >
         <p>x: {map.x}</p>
         <p>y: {map.y}</p>
         <p>z: {map.z}</p>
+        <button onClick={() => changeEditStatus(!isEditing)}>
+          {isEditing ? '查看' : '编辑'}
+        </button>
         <button onClick={() => changeAutoRotateStatus(!isAutoRotate)}>
           转动/停止
         </button>
