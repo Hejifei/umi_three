@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-// import { DragControls } from 'three/examples/js/controls/DragControls.js';
+import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import { Water } from 'three/examples/jsm/objects/Water';
 import { Sky } from 'three/examples/jsm/objects/Sky';
 import {
