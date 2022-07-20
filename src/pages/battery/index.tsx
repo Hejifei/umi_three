@@ -9,6 +9,7 @@ import {
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { Water } from 'three/examples/jsm/objects/Water';
 import { Sky } from 'three/examples/jsm/objects/Sky';
 import {
@@ -87,6 +88,8 @@ export default function IndexPage() {
   const mouseRef = useRef<Vector2>();
   const waterRef = useRef<Water>();
   const clockRef = useRef<Clock>();
+  const dragControlRef = useRef<DragControls>();
+  const transformControlsRef = useRef<TransformControls>();
   const points = useMemo(
     () => [
       {
@@ -289,7 +292,7 @@ export default function IndexPage() {
 
     controlsRef.current.target.set(0, 0, 0);
     controlsRef.current.enableDamping = true;
-    controlsRef.current.enablePan = true; //  是否开启相机平移操作
+    // controlsRef.current.enablePan = true; //  是否开启相机平移操作
     controlsRef.current.maxPolarAngle = 1.5;
     controlsRef.current.panSpeed = 2.0;
     controlsRef.current.minDistance = 50;
@@ -596,6 +599,42 @@ export default function IndexPage() {
     setIsEditing(editAble);
   }, []);
 
+  const initDragControls = useCallback(() => {
+    const camera = cameraRef.current;
+    const content = contentRef.current;
+    const control = controlsRef.current;
+    if (!camera || !content || !control) {
+      return;
+    }
+    // TODO
+    const objects: any[] = [];
+    sceneRef.current?.traverse((child) => {
+      if ((child as Mesh).isMesh) {
+        objects.push(child);
+      }
+    });
+
+    const dragControls = new DragControls(objects, camera, content);
+    // const dragControls = new DragControls(objects, camera, rendererRef.current?.domElement)
+    dragControls.transformGroup = true;
+    dragControlRef.current = dragControls;
+    // const transformControls = new TransformControls(camera, content)
+    // transformControlsRef.current = transformControls
+
+    dragControls.addEventListener('hoveron', function (event) {
+      // 让变换控件对象和选中的mesh与其group绑定
+      console.log('===', event);
+      // transformControls.attach( event.object.parent);
+    });
+
+    dragControls.addEventListener('dragstart', function (event) {
+      control.enabled = false;
+    });
+    dragControls.addEventListener('dragend', function (event) {
+      control.enabled = true;
+    });
+  }, []);
+
   const init = useCallback(async () => {
     // 将 gltf 模型放在静态资源文件夹public下才能被访问到
 
@@ -630,6 +669,7 @@ export default function IndexPage() {
     addClickPoint();
     sceneRef.current?.remove(inverterGltf.scene);
     inverterGltf.scene.remove();
+    initDragControls();
 
     loop();
 
