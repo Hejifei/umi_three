@@ -45,6 +45,13 @@ import {
   MeshLambertMaterial,
   SpotLight,
   PCFShadowMap,
+  // Geometry,
+  DoubleSide,
+  Line,
+  BufferGeometry,
+  Float32BufferAttribute,
+  ConeGeometry,
+  CylinderGeometry,
 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import Animations from '@/utils/animations';
@@ -74,7 +81,7 @@ const defaultMap = {
   y: 1,
   z: 1,
 };
-export default function IndexPage() {
+export default function RoofPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isAutoRotate, setIsAutoRotate] = useState(false);
   const [map, setMap] = useState({ ...defaultMap });
@@ -391,40 +398,80 @@ export default function IndexPage() {
     const group3 = new Group();
     sceneRef.current?.add(group3);
 
-    const geometry = new BoxGeometry(40, 40, 40);
-    for (let i = 0; i < 5; i++) {
-      const object = new Mesh(
-        geometry,
-        new MeshLambertMaterial({ color: Math.random() * 0xffffff }),
-      );
+    // const geometry = new BoxGeometry(40, 40, 40);
+    // for (let i = 0; i < 5; i++) {
+    //   const object = new Mesh(
+    //     geometry,
+    //     new MeshLambertMaterial({ color: Math.random() * 0xffffff }),
+    //   );
 
-      object.position.x = Math.random() * 1000 - 500;
-      object.position.y = Math.random() * 600 - 300;
-      object.position.z = Math.random() * 800 - 400;
+    //   object.position.x = Math.random() * 1000 - 500;
+    //   object.position.y = Math.random() * 600 - 300;
+    //   object.position.z = Math.random() * 800 - 400;
 
-      object.rotation.x = Math.random() * 2 * Math.PI;
-      object.rotation.y = Math.random() * 2 * Math.PI;
-      object.rotation.z = Math.random() * 2 * Math.PI;
+    //   object.rotation.x = Math.random() * 2 * Math.PI;
+    //   object.rotation.y = Math.random() * 2 * Math.PI;
+    //   object.rotation.z = Math.random() * 2 * Math.PI;
 
-      object.scale.x = Math.random() * 2 + 1;
-      object.scale.y = Math.random() * 2 + 1;
-      object.scale.z = Math.random() * 2 + 1;
+    //   object.scale.x = Math.random() * 2 + 1;
+    //   object.scale.y = Math.random() * 2 + 1;
+    //   object.scale.z = Math.random() * 2 + 1;
 
-      object.castShadow = true;
-      object.receiveShadow = true;
+    //   object.castShadow = true;
+    //   object.receiveShadow = true;
 
-      // sceneRef.current?.add( object );
-      if (i % 3 === 0) {
-        group1.add(object);
-      } else if (i % 3 === 1) {
-        group2.add(object);
-      } else {
-        group3.add(object);
-      }
-      drag_obj_ref.current.push(object);
-    }
-    // sceneRef.current?.add(group);
-    addDragControl();
+    //   // sceneRef.current?.add( object );
+    //   if (i % 3 === 0) {
+    //     group1.add(object);
+    //   } else if (i % 3 === 1) {
+    //     group2.add(object)
+    //   } else {
+    //     group3.add(object)
+    //   }
+    //   drag_obj_ref.current.push(object);
+    // }
+    // // sceneRef.current?.add(group);
+    // addDragControl();
+
+    // var geometry = new BufferGeometry();//声明一个空几何体对象
+
+    // const positions = [];
+    // const r = 800;
+
+    // for ( let i = 0; i < 2; i ++ ) {
+    //   const x = Math.random() * r - r / 2;
+    //   const y = Math.random() * r - r / 2;
+    //   const z = Math.random() * r - r / 2;
+    //   // positions
+    //   positions.push( x, y, z );
+
+    // }
+    // geometry.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
+    // // generateMorphTargets( geometry );1
+    // geometry.computeBoundingSphere();
+
+    // // var p1 = new Vector3(10,0,0);//顶点1坐标
+    // // var p2 = new Vector3(0,20,0);//顶点2坐标
+    // // geometry.vertices.push(p1,p2); //顶点坐标添加到geometry对象
+    // var material=new LineBasicMaterial({
+    //     color:0x0000ff //线条颜色
+    // });//材质对象
+    // var line=new Line(geometry,material);//线条模型对象
+    // sceneRef.current?.add(line);
+
+    const geometry = new CylinderGeometry(50, 50, 200, 3);
+    const material = new MeshBasicMaterial({ color: 0x0000ff });
+
+    const cone = new Mesh(geometry, material);
+    // cone.position.x = Math.random() * 1000 - 500;
+    // cone.position.y = Math.random() * 600 - 300;
+    cone.position.y = 24;
+    // cone.position.z = Math.random() * 800 - 400;
+
+    cone.rotation.x = Math.PI / 2;
+    // cone.rotation.x = Math.PI / 6;
+    cone.rotation.y = Math.PI / 3;
+    sceneRef.current?.add(cone);
 
     /**
      * 辅助线坐标轴显示

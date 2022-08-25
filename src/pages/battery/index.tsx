@@ -606,26 +606,45 @@ export default function IndexPage() {
     if (!camera || !content || !control) {
       return;
     }
-    // TODO
-    const objects: any[] = [];
-    sceneRef.current?.traverse((child) => {
-      if ((child as Mesh).isMesh) {
-        objects.push(child);
+    // const objects: any[] = [];
+    // sceneRef.current?.children.forEach(groupItem => {
+    //   if ((groupItem as Group).isGroup) {
+    //     objects.unshift(groupItem)
+    //   }
+    // })
+    // const dragControls = new DragControls(objects, camera, content);
+    // sceneRef.current?.traverse((child) => {
+    //   if ((child as Mesh).isMesh) {
+    //     objects.push(child);
+    //   }
+    // });
+
+    const dragControls = new DragControls([], camera, content);
+    // const dragControls = new DragControls(objects, camera, rendererRef.current?.domElement)
+    const draggableObjects = dragControls.getObjects();
+    //   console.log({
+    //     draggableObjects,
+    //   });
+    draggableObjects.length = 0;
+
+    sceneRef.current?.children.forEach((groupItem) => {
+      if ((groupItem as Group).isGroup) {
+        draggableObjects.push(groupItem);
+        console.log({
+          groupItem,
+        });
       }
     });
-
-    const dragControls = new DragControls(objects, camera, content);
-    // const dragControls = new DragControls(objects, camera, rendererRef.current?.domElement)
     dragControls.transformGroup = true;
     dragControlRef.current = dragControls;
     // const transformControls = new TransformControls(camera, content)
     // transformControlsRef.current = transformControls
 
-    dragControls.addEventListener('hoveron', function (event) {
-      // 让变换控件对象和选中的mesh与其group绑定
-      console.log('===', event);
-      // transformControls.attach( event.object.parent);
-    });
+    // dragControls.addEventListener('hoveron', function (event) {
+    //   // 让变换控件对象和选中的mesh与其group绑定
+    //   console.log('===', event);
+    //   // transformControls.attach( event.object.parent);
+    // });
 
     dragControls.addEventListener('dragstart', function (event) {
       control.enabled = false;
@@ -662,7 +681,6 @@ export default function IndexPage() {
     addCamera();
     addLight();
     setControls();
-    // sceneRef.current?.add(group);
     groupClone(group);
     addWater();
     addSky();
