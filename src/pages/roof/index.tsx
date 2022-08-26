@@ -52,6 +52,8 @@ import {
   Float32BufferAttribute,
   ConeGeometry,
   CylinderGeometry,
+  SplineCurve,
+  SphereBufferGeometry,
 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import Animations from '@/utils/animations';
@@ -346,15 +348,20 @@ export default function RoofPage() {
         //   object.material.emissive.set(0xaaaaaa);
         //   group.attach(object);
         // }
-        sceneRef.current?.traverse((child) => {
-          if ((child as Mesh).isMesh) {
-            child.material.emissive.set(0x000000);
-          }
-        });
+        // sceneRef.current?.traverse((child) => {
+        //   if ((child as Mesh).isMesh) {
+        //     console.log({
+        //       child,
+        //     })
+        //     // child.material?.emissive.set(0x000000);
+        //     child.material.color = new Color(0x000000);
+        //   }
+        // });
         if ((objectGroup as Group).isGroup) {
           objectGroup?.children.forEach((child) => {
             if ((child as Mesh).isMesh) {
-              child.material.emissive.set(0xaaaaaa);
+              // child.material.emissive.set(0xaaaaaa);
+              child.material.color = new Color(0xaaaaaa);
             }
           });
         }
@@ -383,6 +390,85 @@ export default function RoofPage() {
     enableSelectionRef.current = false;
   }, []);
 
+  const parseTrangleCube = useCallback((long, width, height) => {
+    const cubeGroup = new Group();
+    cubeGroup.name = 'cubeGroup';
+    const bottomGeometry = new BoxGeometry(width, long, 1);
+    const bottomMaterial = new MeshBasicMaterial({ color: 0x00ff00 });
+    const bottomSide = new Mesh(bottomGeometry, bottomMaterial);
+    bottomSide.rotation.x = Math.PI / 2;
+    bottomSide.position.x = width / 2;
+    bottomSide.name = 'bottomSide';
+    cubeGroup.add(bottomSide);
+
+    const topWidth = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+    console.log({ topWidth });
+    const topGeometry = new BoxGeometry(long, topWidth, 1);
+    const topMaterial = new MeshBasicMaterial({ color: 0xffffff });
+    const topSide = new Mesh(topGeometry, topMaterial);
+    // topSide.rotation.y = - Math.PI / 4 * 3;
+    topSide.rotation.x = Math.PI / 2;
+    // const angle = Math.atan(height / width) * 180 / Math.PI / Math.PI
+    const angle = Math.atan(height / width);
+    topSide.rotation.y = angle;
+    topSide.position.y = height / 2;
+    topSide.position.x = width / 2;
+    // topSide.rotation.z = Math.PI / 4;
+    topSide.name = 'topSide';
+    cubeGroup.add(topSide);
+
+    const rightGeometry = new BoxGeometry(height, long, 1);
+    const rightMaterial = new MeshBasicMaterial({ color: 0xffffff });
+    const rightSide = new Mesh(rightGeometry, rightMaterial);
+    // rightSide.rotation.y = - Math.PI / 4 * 3;
+    rightSide.rotation.x = Math.PI / 2;
+    rightSide.rotation.y = Math.PI / 2;
+    rightSide.position.x = width;
+    rightSide.position.y = height / 2;
+    // topSide.rotation.z = Math.PI / 4;
+    cubeGroup.add(rightSide);
+    rightSide.name = 'rightSide';
+    sceneRef.current?.add(cubeGroup);
+
+    const dragGroup = new Group();
+    dragGroup.name = 'dragGroup';
+    dragGroup.position.x = width;
+    dragGroup.position.y = height;
+
+    const rightFrontBallGeometry = new SphereBufferGeometry(5, 999, 999);
+    const rightFrontBallMaterial = new MeshBasicMaterial({ color: 0x00ff00 });
+    const rightFrontBall = new Mesh(
+      rightFrontBallGeometry,
+      rightFrontBallMaterial,
+    );
+    rightFrontBall.position.z = long / 2;
+    dragGroup.add(rightFrontBall);
+
+    const rightBehindBallGeometry = new SphereBufferGeometry(5, 999, 999);
+    const rightBehindBallMaterial = new MeshBasicMaterial({ color: 0x00ff00 });
+    const rightBehindBall = new Mesh(
+      rightBehindBallGeometry,
+      rightBehindBallMaterial,
+    );
+    rightBehindBall.position.z = -long / 2;
+    dragGroup.add(rightBehindBall);
+
+    const rightLinkLineMaterial = new LineBasicMaterial({ color: 0x00ff00 });
+    const rightLinkLinepPoints = [];
+    rightLinkLinepPoints.push(new Vector3(0, 0, long / 2));
+    rightLinkLinepPoints.push(new Vector3(0, 0, -long / 2));
+    // points.push( new Vector3( 10, 0, 0 ) );
+    const geometry = new BufferGeometry().setFromPoints(rightLinkLinepPoints);
+    const rightLine = new Line(geometry, rightLinkLineMaterial);
+    dragGroup.add(rightLine);
+
+    sceneRef.current?.add(dragGroup);
+
+    drag_obj_ref.current.push(rightFrontBall);
+    drag_obj_ref.current.push(rightBehindBall);
+    drag_obj_ref.current.push(rightLine);
+  }, []);
+
   const init = useCallback(async () => {
     raycasterRef.current = new Raycaster();
     mouseRef.current = new Vector2();
@@ -391,12 +477,13 @@ export default function RoofPage() {
     addLight();
     setControls();
 
-    const group1 = new Group();
-    sceneRef.current?.add(group1);
-    const group2 = new Group();
-    sceneRef.current?.add(group2);
-    const group3 = new Group();
-    sceneRef.current?.add(group3);
+    parseTrangleCube(500, 300, 400);
+    // const group1 = new Group();
+    // sceneRef.current?.add(group1);
+    // const group2 = new Group();
+    // sceneRef.current?.add(group2);
+    // const group3 = new Group();
+    // sceneRef.current?.add(group3);
 
     // const geometry = new BoxGeometry(40, 40, 40);
     // for (let i = 0; i < 5; i++) {
@@ -430,8 +517,8 @@ export default function RoofPage() {
     //   }
     //   drag_obj_ref.current.push(object);
     // }
-    // // sceneRef.current?.add(group);
-    // addDragControl();
+    // sceneRef.current?.add(group);
+    addDragControl();
 
     // var geometry = new BufferGeometry();//声明一个空几何体对象
 
@@ -459,19 +546,19 @@ export default function RoofPage() {
     // var line=new Line(geometry,material);//线条模型对象
     // sceneRef.current?.add(line);
 
-    const geometry = new CylinderGeometry(50, 50, 200, 3);
-    const material = new MeshBasicMaterial({ color: 0x0000ff });
+    // const geometry = new CylinderGeometry(50, 50, 200, 3);
+    // const material = new MeshBasicMaterial({ color: 0x0000ff });
 
-    const cone = new Mesh(geometry, material);
-    // cone.position.x = Math.random() * 1000 - 500;
-    // cone.position.y = Math.random() * 600 - 300;
-    cone.position.y = 24;
-    // cone.position.z = Math.random() * 800 - 400;
+    // const cone = new Mesh(geometry, material);
+    // // cone.position.x = Math.random() * 1000 - 500;
+    // // cone.position.y = Math.random() * 600 - 300;
+    // cone.position.y = 24;
+    // // cone.position.z = Math.random() * 800 - 400;
 
-    cone.rotation.x = Math.PI / 2;
-    // cone.rotation.x = Math.PI / 6;
-    cone.rotation.y = Math.PI / 3;
-    sceneRef.current?.add(cone);
+    // cone.rotation.x = Math.PI / 2;
+    // // cone.rotation.x = Math.PI / 6;
+    // cone.rotation.y = Math.PI / 3;
+    // sceneRef.current?.add(cone);
 
     /**
      * 辅助线坐标轴显示
