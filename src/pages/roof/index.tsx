@@ -240,23 +240,42 @@ export default function RoofPage() {
     renderer.render(scene, camera);
   }, []);
 
-  const changeRoofHeight = useCallback((height: number) => {
+  const changeRoofHeight = useCallback((height: number, isRight) => {
+    console.log({ isRight });
     const topSide = sceneRef.current?.getObjectByName('topSide');
     const rightSide = sceneRef.current?.getObjectByName('rightSide');
     const bottomSide = sceneRef.current?.getObjectByName('bottomSide');
-    if (rightSide) {
-      const geometry = (rightSide as Mesh).geometry;
-      const parameters = (geometry as BoxGeometry).parameters;
+    const leftSide = sceneRef.current?.getObjectByName('leftSide');
+    if (rightSide && isRight) {
+      // const geometry = (rightSide as Mesh).geometry;
+      // const parameters = (geometry as BoxGeometry).parameters;
       rightSide.scale.x = height;
       rightSide.position.y = height / 2;
     }
-    if (topSide && bottomSide) {
+    if (leftSide && !isRight) {
+      // const geometry = (rightSide as Mesh).geometry;
+      // const parameters = (geometry as BoxGeometry).parameters;
+      leftSide.scale.x = height;
+      leftSide.position.y = height / 2;
+    }
+    if (topSide && bottomSide && leftSide && rightSide) {
+      const leftSideHeight = leftSide.scale.x;
+      const rightSideHeight = rightSide.scale.x;
+      const heightRange = isRight
+        ? height - leftSideHeight
+        : rightSideHeight - height;
+      // console.log({
+      //   leftSideHeight,
+      //   heightRange,
+      //   height,
+      //   leftSide,
+      // })
       const { scale } = bottomSide;
       const { x: width } = scale;
-      const topWidth = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
-      const angle = Math.atan(height / width);
+      const topWidth = Math.sqrt(Math.pow(width, 2) + Math.pow(heightRange, 2));
+      const angle = Math.atan(heightRange / width);
       topSide.rotation.y = -angle;
-      topSide.position.y = height / 2;
+      topSide.position.y = heightRange / 2 + leftSideHeight;
       topSide.position.x = width / 2;
       topSide.scale.x = topWidth;
     }
@@ -314,6 +333,11 @@ export default function RoofPage() {
     });
     dragControls.addEventListener('drag', function (event) {
       const { object } = event;
+      const { name } = object;
+      console.log({
+        object,
+        name,
+      });
       const position = object.position;
       const initPosition = object.initPosition;
       const { x, z } = initPosition;
@@ -322,7 +346,7 @@ export default function RoofPage() {
       if (position.y < 0) {
         object.position.y = 0;
       }
-      changeRoofHeight(position.y);
+      changeRoofHeight(position.y, name === 'rightDragGroup');
     });
     dragControls.addEventListener('dragend', function (event) {
       control.enabled = true;
@@ -428,131 +452,172 @@ export default function RoofPage() {
     enableSelectionRef.current = false;
   }, []);
 
-  const parseTrangleCube = useCallback((width, long, leftHeight, height) => {
-    const cubeGroup = new Group();
-    cubeGroup.position.x = -width / 2;
-    cubeGroup.name = 'cubeGroup';
-    const bottomGeometry = new PlaneGeometry(1, 1);
-    const bottomMaterial = new MeshBasicMaterial({
-      color: 0x00ff00,
-      side: DoubleSide,
-    });
-    const bottomSide = new Mesh(bottomGeometry, bottomMaterial);
-    bottomSide.scale.set(width, long, 1);
-    bottomSide.rotation.x = Math.PI / 2;
-    bottomSide.position.x = width / 2;
-    bottomSide.name = 'bottomSide';
-    cubeGroup.add(bottomSide);
+  const parseTrangleCube = useCallback(
+    (width, long, leftHeight, rightHeight) => {
+      const height = rightHeight - leftHeight;
 
-    // TODO
-    const topWidth = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
-    const topGeometry = new PlaneGeometry(1, 1);
-    var textureLoader = new TextureLoader();
-    textureLoader.load('beauty.jpg', function (texture) {
-      // texture.rotation = - Math.PI / 2
-      const topMaterial = new MeshBasicMaterial({
-        // color: 0xffffff,
-        map: texture,
+      const cubeGroup = new Group();
+      cubeGroup.position.x = -width / 2;
+      cubeGroup.name = 'cubeGroup';
+
+      const bottomGeometry = new PlaneGeometry(1, 1);
+      const bottomMaterial = new MeshBasicMaterial({
+        color: 0x00ff00,
         side: DoubleSide,
       });
-      const topSide = new Mesh(topGeometry, topMaterial);
-      topSide.scale.set(topWidth, long, 1);
-      topSide.rotation.x = -Math.PI / 2;
-      const angle = Math.atan(height / width);
-      topSide.rotation.y = -angle;
-      topSide.position.y = height / 2;
-      topSide.position.x = width / 2;
-      topSide.name = 'topSide';
-      cubeGroup.add(topSide);
-    });
-    // const texture = ImageUtils.getDataURL("./beauty.jpg")
+      const bottomSide = new Mesh(bottomGeometry, bottomMaterial);
+      bottomSide.scale.set(width, long, 1);
+      bottomSide.rotation.x = Math.PI / 2;
+      bottomSide.position.x = width / 2;
+      bottomSide.name = 'bottomSide';
+      cubeGroup.add(bottomSide);
+      const topWidth = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+      const topGeometry = new PlaneGeometry(1, 1);
+      var textureLoader = new TextureLoader();
+      textureLoader.load('beauty.jpg', function (texture) {
+        const topMaterial = new MeshBasicMaterial({
+          // color: 0xffffff,
+          map: texture,
+          side: DoubleSide,
+        });
+        const topSide = new Mesh(topGeometry, topMaterial);
+        topSide.scale.set(topWidth, long, 1);
+        topSide.rotation.x = -Math.PI / 2;
+        const angle = Math.atan(height / width);
+        topSide.rotation.y = -angle;
+        topSide.position.y = height / 2 + leftHeight;
+        topSide.position.x = width / 2;
+        topSide.name = 'topSide';
+        cubeGroup.add(topSide);
+      });
 
-    // const rightGeometry = new BoxGeometry(height, long, 1)
-    const rightGeometry = new PlaneGeometry(1, 1);
-    const rightMaterial = new MeshBasicMaterial({
-      color: 0xffffff,
-      side: DoubleSide,
-    });
-    const rightSide = new Mesh(rightGeometry, rightMaterial);
-    rightSide.scale.set(height, long, 1);
-    // rightSide.rotation.y = - Math.PI / 4 * 3;
-    rightSide.rotation.x = Math.PI / 2;
-    rightSide.rotation.y = Math.PI / 2;
-    rightSide.position.x = width;
-    rightSide.position.y = height / 2;
-    // topSide.rotation.z = Math.PI / 4;
-    cubeGroup.add(rightSide);
-    rightSide.name = 'rightSide';
-    sceneRef.current?.add(cubeGroup);
+      const rightGeometry = new PlaneGeometry(1, 1);
+      const rightMaterial = new MeshBasicMaterial({
+        color: 0xffffff,
+        side: DoubleSide,
+      });
+      const rightSide = new Mesh(rightGeometry, rightMaterial);
+      rightSide.scale.set(rightHeight, long, 1);
+      rightSide.rotation.x = Math.PI / 2;
+      rightSide.rotation.y = Math.PI / 2;
+      rightSide.position.x = width;
+      rightSide.position.y = rightHeight / 2;
+      cubeGroup.add(rightSide);
+      rightSide.name = 'rightSide';
 
-    const dragGroup = new Group();
-    dragGroup.name = 'dragGroup';
-    dragGroup.position.x = width / 2;
-    dragGroup.position.y = height;
-    dragGroup.initPosition = {
-      y: height,
-      x: width / 2,
-      z: 0,
-    };
-    console.log({
-      dragGroup,
-      width,
-      height,
-    });
+      const leftGeometry = new PlaneGeometry(1, 1);
+      const leftMaterial = new MeshBasicMaterial({
+        color: 0xff00ff,
+        side: DoubleSide,
+      });
+      const leftSide = new Mesh(leftGeometry, leftMaterial);
+      leftSide.scale.set(leftHeight, long, 1);
+      leftSide.rotation.x = Math.PI / 2;
+      leftSide.rotation.y = Math.PI / 2;
+      leftSide.position.x = 0;
+      leftSide.position.y = leftHeight / 2;
+      cubeGroup.add(leftSide);
+      leftSide.name = 'leftSide';
 
-    const rightFrontBallGeometry = new SphereBufferGeometry(5, 999, 999);
-    const rightFrontBallMaterial = new MeshBasicMaterial({ color: 0x00ff00 });
-    const rightFrontBall = new Mesh(
-      rightFrontBallGeometry,
-      rightFrontBallMaterial,
-    );
-    rightFrontBall.position.z = long / 2;
-    dragGroup.add(rightFrontBall);
+      sceneRef.current?.add(cubeGroup);
 
-    const rightBehindBallGeometry = new SphereBufferGeometry(5, 999, 999);
-    const rightBehindBallMaterial = new MeshBasicMaterial({ color: 0x00ff00 });
-    const rightBehindBall = new Mesh(
-      rightBehindBallGeometry,
-      rightBehindBallMaterial,
-    );
-    rightBehindBall.position.z = -long / 2;
-    dragGroup.add(rightBehindBall);
+      const rightDragGroup = new Group();
+      rightDragGroup.name = 'rightDragGroup';
+      rightDragGroup.position.x = width / 2;
+      rightDragGroup.position.y = rightHeight;
+      rightDragGroup.initPosition = {
+        y: rightHeight,
+        x: width / 2,
+        z: 0,
+      };
 
-    const rightLinkLineMaterial = new LineBasicMaterial({ color: 0x00ff00 });
-    const rightLinkLinepPoints = [];
-    rightLinkLinepPoints.push(new Vector3(0, 0, long / 2));
-    rightLinkLinepPoints.push(new Vector3(0, 0, -long / 2));
-    // points.push( new Vector3( 10, 0, 0 ) );
-    const geometry = new BufferGeometry().setFromPoints(rightLinkLinepPoints);
-    const rightLine = new Line(geometry, rightLinkLineMaterial);
-    dragGroup.add(rightLine);
+      const rightFrontBallGeometry = new SphereBufferGeometry(5, 999, 999);
+      const rightFrontBallMaterial = new MeshBasicMaterial({ color: 0x00ff00 });
+      const rightFrontBall = new Mesh(
+        rightFrontBallGeometry,
+        rightFrontBallMaterial,
+      );
+      rightFrontBall.position.z = long / 2;
+      rightDragGroup.add(rightFrontBall);
 
-    sceneRef.current?.add(dragGroup);
+      const rightBehindBallGeometry = new SphereBufferGeometry(5, 999, 999);
+      const rightBehindBallMaterial = new MeshBasicMaterial({
+        color: 0x00ff00,
+      });
+      const rightBehindBall = new Mesh(
+        rightBehindBallGeometry,
+        rightBehindBallMaterial,
+      );
+      rightBehindBall.position.z = -long / 2;
+      rightDragGroup.add(rightBehindBall);
 
-    drag_obj_ref.current.push(rightFrontBall);
-    drag_obj_ref.current.push(rightBehindBall);
-    drag_obj_ref.current.push(rightLine);
+      const rightLinkLineMaterial = new LineBasicMaterial({ color: 0x00ff00 });
+      const rightLinkLinepPoints = [];
+      rightLinkLinepPoints.push(new Vector3(0, 0, long / 2));
+      rightLinkLinepPoints.push(new Vector3(0, 0, -long / 2));
+      const geometry = new BufferGeometry().setFromPoints(rightLinkLinepPoints);
+      const rightLine = new Line(geometry, rightLinkLineMaterial);
+      rightDragGroup.add(rightLine);
+      sceneRef.current?.add(rightDragGroup);
 
-    const dragControls = dragControlRef.current;
-    const draggableObjects = dragControls?.getObjects();
-    const objectGroup = sceneRef.current?.getObjectByName('dragGroup');
-    console.log({
-      objectGroup,
-      dragControls,
-    });
-    if (objectGroup && dragControls) {
-      // if ((objectGroup as Group).isGroup) {
-      //   objectGroup?.children.forEach((child) => {
-      //     if ((child as Mesh).isMesh) {
-      //       // child.material.emissive.set(0xaaaaaa);
-      //       child.material.color = new Color(0xaaaaaa);
-      //     }
-      //   });
-      // }
-      draggableObjects?.push(objectGroup);
-      dragControls.transformGroup = true;
-    }
-  }, []);
+      drag_obj_ref.current.push(rightFrontBall);
+      drag_obj_ref.current.push(rightBehindBall);
+      drag_obj_ref.current.push(rightLine);
+
+      const leftDragGroup = new Group();
+      leftDragGroup.name = 'leftDragGroup';
+      leftDragGroup.position.x = -width / 2;
+      leftDragGroup.position.y = leftHeight;
+      leftDragGroup.initPosition = {
+        y: leftHeight,
+        x: -width / 2,
+        z: 0,
+      };
+
+      const leftFrontBallGeometry = new SphereBufferGeometry(5, 999, 999);
+      const leftFrontBallMaterial = new MeshBasicMaterial({ color: 0x00ff00 });
+      const leftFrontBall = new Mesh(
+        leftFrontBallGeometry,
+        leftFrontBallMaterial,
+      );
+      leftFrontBall.position.z = long / 2;
+      leftDragGroup.add(leftFrontBall);
+
+      const leftBehindBallGeometry = new SphereBufferGeometry(5, 999, 999);
+      const leftBehindBallMaterial = new MeshBasicMaterial({ color: 0x00ff00 });
+      const leftBehindBall = new Mesh(
+        leftBehindBallGeometry,
+        leftBehindBallMaterial,
+      );
+      leftBehindBall.position.z = -long / 2;
+      leftDragGroup.add(leftBehindBall);
+
+      const leftLinkLineMaterial = new LineBasicMaterial({ color: 0x00ff00 });
+      const leftLinkLinepPoints = [];
+      leftLinkLinepPoints.push(new Vector3(0, 0, long / 2));
+      leftLinkLinepPoints.push(new Vector3(0, 0, -long / 2));
+      const leftLineGeometry = new BufferGeometry().setFromPoints(
+        rightLinkLinepPoints,
+      );
+      const leftLine = new Line(leftLineGeometry, leftLinkLineMaterial);
+      leftDragGroup.add(leftLine);
+      sceneRef.current?.add(leftDragGroup);
+
+      drag_obj_ref.current.push(leftFrontBall);
+      drag_obj_ref.current.push(leftFrontBall);
+      drag_obj_ref.current.push(leftLine);
+
+      const dragControls = dragControlRef.current;
+      const draggableObjects = dragControls?.getObjects();
+      // const objectGroup = sceneRef.current?.getObjectByName('dragGroup');
+      if (dragControls) {
+        // draggableObjects?.push(leftDragGroup);
+        draggableObjects?.push(rightDragGroup, leftDragGroup);
+        dragControls.transformGroup = true;
+      }
+    },
+    [],
+  );
 
   const init = useCallback(async () => {
     raycasterRef.current = new Raycaster();
@@ -564,47 +629,7 @@ export default function RoofPage() {
 
     addDragControl();
 
-    parseTrangleCube(1000, 500, 200, 400);
-    // const group1 = new Group();
-    // sceneRef.current?.add(group1);
-    // const group2 = new Group();
-    // sceneRef.current?.add(group2);
-    // const group3 = new Group();
-    // sceneRef.current?.add(group3);
-
-    // const geometry = new BoxGeometry(40, 40, 40);
-    // for (let i = 0; i < 5; i++) {
-    //   const object = new Mesh(
-    //     geometry,
-    //     new MeshLambertMaterial({ color: Math.random() * 0xffffff }),
-    //   );
-
-    //   object.position.x = Math.random() * 1000 - 500;
-    //   object.position.y = Math.random() * 600 - 300;
-    //   object.position.z = Math.random() * 800 - 400;
-
-    //   object.rotation.x = Math.random() * 2 * Math.PI;
-    //   object.rotation.y = Math.random() * 2 * Math.PI;
-    //   object.rotation.z = Math.random() * 2 * Math.PI;
-
-    //   object.scale.x = Math.random() * 2 + 1;
-    //   object.scale.y = Math.random() * 2 + 1;
-    //   object.scale.z = Math.random() * 2 + 1;
-
-    //   object.castShadow = true;
-    //   object.receiveShadow = true;
-
-    //   // sceneRef.current?.add( object );
-    //   if (i % 3 === 0) {
-    //     group1.add(object);
-    //   } else if (i % 3 === 1) {
-    //     group2.add(object)
-    //   } else {
-    //     group3.add(object)
-    //   }
-    //   drag_obj_ref.current.push(object);
-    // }
-    // sceneRef.current?.add(group);
+    parseTrangleCube(1000, 500, 200, 100);
 
     /**
      * 辅助线坐标轴显示
