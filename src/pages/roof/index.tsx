@@ -47,6 +47,8 @@ import {
   PCFShadowMap,
   // Geometry,
   DoubleSide,
+  BackSide,
+  FrontSide,
   Line,
   BufferGeometry,
   Float32BufferAttribute,
@@ -54,6 +56,8 @@ import {
   CylinderGeometry,
   SplineCurve,
   SphereBufferGeometry,
+  ImageUtils,
+  Texture,
 } from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import Animations from '@/utils/animations';
@@ -236,6 +240,28 @@ export default function RoofPage() {
     renderer.render(scene, camera);
   }, []);
 
+  const changeRoofHeight = useCallback((height: number) => {
+    const topSide = sceneRef.current?.getObjectByName('topSide');
+    const rightSide = sceneRef.current?.getObjectByName('rightSide');
+    const bottomSide = sceneRef.current?.getObjectByName('bottomSide');
+    if (rightSide) {
+      const geometry = (rightSide as Mesh).geometry;
+      const parameters = (geometry as BoxGeometry).parameters;
+      rightSide.scale.x = height;
+      rightSide.position.y = height / 2;
+    }
+    if (topSide && bottomSide) {
+      const { scale } = bottomSide;
+      const { x: width } = scale;
+      const topWidth = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+      const angle = Math.atan(height / width);
+      topSide.rotation.y = -angle;
+      topSide.position.y = height / 2;
+      topSide.position.x = width / 2;
+      topSide.scale.x = topWidth;
+    }
+  }, []);
+
   const addDragControl = useCallback(() => {
     const camera = cameraRef.current;
     // const group = groupRef.current
@@ -285,6 +311,18 @@ export default function RoofPage() {
       // // });
       // dragControls.transformGroup = true;
       // draggableObjects.push(parentGroup);
+    });
+    dragControls.addEventListener('drag', function (event) {
+      const { object } = event;
+      const position = object.position;
+      const initPosition = object.initPosition;
+      const { x, z } = initPosition;
+      object.position.x = x;
+      object.position.z = z;
+      if (position.y < 0) {
+        object.position.y = 0;
+      }
+      changeRoofHeight(position.y);
     });
     dragControls.addEventListener('dragend', function (event) {
       control.enabled = true;
@@ -390,36 +428,53 @@ export default function RoofPage() {
     enableSelectionRef.current = false;
   }, []);
 
-  const parseTrangleCube = useCallback((long, width, height) => {
+  const parseTrangleCube = useCallback((width, long, leftHeight, height) => {
     const cubeGroup = new Group();
+    cubeGroup.position.x = -width / 2;
     cubeGroup.name = 'cubeGroup';
-    const bottomGeometry = new BoxGeometry(width, long, 1);
-    const bottomMaterial = new MeshBasicMaterial({ color: 0x00ff00 });
+    const bottomGeometry = new PlaneGeometry(1, 1);
+    const bottomMaterial = new MeshBasicMaterial({
+      color: 0x00ff00,
+      side: DoubleSide,
+    });
     const bottomSide = new Mesh(bottomGeometry, bottomMaterial);
+    bottomSide.scale.set(width, long, 1);
     bottomSide.rotation.x = Math.PI / 2;
     bottomSide.position.x = width / 2;
     bottomSide.name = 'bottomSide';
     cubeGroup.add(bottomSide);
 
+    // TODO
     const topWidth = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
-    console.log({ topWidth });
-    const topGeometry = new BoxGeometry(long, topWidth, 1);
-    const topMaterial = new MeshBasicMaterial({ color: 0xffffff });
-    const topSide = new Mesh(topGeometry, topMaterial);
-    // topSide.rotation.y = - Math.PI / 4 * 3;
-    topSide.rotation.x = Math.PI / 2;
-    // const angle = Math.atan(height / width) * 180 / Math.PI / Math.PI
-    const angle = Math.atan(height / width);
-    topSide.rotation.y = angle;
-    topSide.position.y = height / 2;
-    topSide.position.x = width / 2;
-    // topSide.rotation.z = Math.PI / 4;
-    topSide.name = 'topSide';
-    cubeGroup.add(topSide);
+    const topGeometry = new PlaneGeometry(1, 1);
+    var textureLoader = new TextureLoader();
+    textureLoader.load('beauty.jpg', function (texture) {
+      // texture.rotation = - Math.PI / 2
+      const topMaterial = new MeshBasicMaterial({
+        // color: 0xffffff,
+        map: texture,
+        side: DoubleSide,
+      });
+      const topSide = new Mesh(topGeometry, topMaterial);
+      topSide.scale.set(topWidth, long, 1);
+      topSide.rotation.x = -Math.PI / 2;
+      const angle = Math.atan(height / width);
+      topSide.rotation.y = -angle;
+      topSide.position.y = height / 2;
+      topSide.position.x = width / 2;
+      topSide.name = 'topSide';
+      cubeGroup.add(topSide);
+    });
+    // const texture = ImageUtils.getDataURL("./beauty.jpg")
 
-    const rightGeometry = new BoxGeometry(height, long, 1);
-    const rightMaterial = new MeshBasicMaterial({ color: 0xffffff });
+    // const rightGeometry = new BoxGeometry(height, long, 1)
+    const rightGeometry = new PlaneGeometry(1, 1);
+    const rightMaterial = new MeshBasicMaterial({
+      color: 0xffffff,
+      side: DoubleSide,
+    });
     const rightSide = new Mesh(rightGeometry, rightMaterial);
+    rightSide.scale.set(height, long, 1);
     // rightSide.rotation.y = - Math.PI / 4 * 3;
     rightSide.rotation.x = Math.PI / 2;
     rightSide.rotation.y = Math.PI / 2;
@@ -432,8 +487,18 @@ export default function RoofPage() {
 
     const dragGroup = new Group();
     dragGroup.name = 'dragGroup';
-    dragGroup.position.x = width;
+    dragGroup.position.x = width / 2;
     dragGroup.position.y = height;
+    dragGroup.initPosition = {
+      y: height,
+      x: width / 2,
+      z: 0,
+    };
+    console.log({
+      dragGroup,
+      width,
+      height,
+    });
 
     const rightFrontBallGeometry = new SphereBufferGeometry(5, 999, 999);
     const rightFrontBallMaterial = new MeshBasicMaterial({ color: 0x00ff00 });
@@ -467,6 +532,26 @@ export default function RoofPage() {
     drag_obj_ref.current.push(rightFrontBall);
     drag_obj_ref.current.push(rightBehindBall);
     drag_obj_ref.current.push(rightLine);
+
+    const dragControls = dragControlRef.current;
+    const draggableObjects = dragControls?.getObjects();
+    const objectGroup = sceneRef.current?.getObjectByName('dragGroup');
+    console.log({
+      objectGroup,
+      dragControls,
+    });
+    if (objectGroup && dragControls) {
+      // if ((objectGroup as Group).isGroup) {
+      //   objectGroup?.children.forEach((child) => {
+      //     if ((child as Mesh).isMesh) {
+      //       // child.material.emissive.set(0xaaaaaa);
+      //       child.material.color = new Color(0xaaaaaa);
+      //     }
+      //   });
+      // }
+      draggableObjects?.push(objectGroup);
+      dragControls.transformGroup = true;
+    }
   }, []);
 
   const init = useCallback(async () => {
@@ -477,7 +562,9 @@ export default function RoofPage() {
     addLight();
     setControls();
 
-    parseTrangleCube(500, 300, 400);
+    addDragControl();
+
+    parseTrangleCube(1000, 500, 200, 400);
     // const group1 = new Group();
     // sceneRef.current?.add(group1);
     // const group2 = new Group();
@@ -518,47 +605,6 @@ export default function RoofPage() {
     //   drag_obj_ref.current.push(object);
     // }
     // sceneRef.current?.add(group);
-    addDragControl();
-
-    // var geometry = new BufferGeometry();//声明一个空几何体对象
-
-    // const positions = [];
-    // const r = 800;
-
-    // for ( let i = 0; i < 2; i ++ ) {
-    //   const x = Math.random() * r - r / 2;
-    //   const y = Math.random() * r - r / 2;
-    //   const z = Math.random() * r - r / 2;
-    //   // positions
-    //   positions.push( x, y, z );
-
-    // }
-    // geometry.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
-    // // generateMorphTargets( geometry );1
-    // geometry.computeBoundingSphere();
-
-    // // var p1 = new Vector3(10,0,0);//顶点1坐标
-    // // var p2 = new Vector3(0,20,0);//顶点2坐标
-    // // geometry.vertices.push(p1,p2); //顶点坐标添加到geometry对象
-    // var material=new LineBasicMaterial({
-    //     color:0x0000ff //线条颜色
-    // });//材质对象
-    // var line=new Line(geometry,material);//线条模型对象
-    // sceneRef.current?.add(line);
-
-    // const geometry = new CylinderGeometry(50, 50, 200, 3);
-    // const material = new MeshBasicMaterial({ color: 0x0000ff });
-
-    // const cone = new Mesh(geometry, material);
-    // // cone.position.x = Math.random() * 1000 - 500;
-    // // cone.position.y = Math.random() * 600 - 300;
-    // cone.position.y = 24;
-    // // cone.position.z = Math.random() * 800 - 400;
-
-    // cone.rotation.x = Math.PI / 2;
-    // // cone.rotation.x = Math.PI / 6;
-    // cone.rotation.y = Math.PI / 3;
-    // sceneRef.current?.add(cone);
 
     /**
      * 辅助线坐标轴显示
