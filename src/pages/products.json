@@ -1,0 +1,238 @@
+{
+  "cn": [
+    {
+      "typeName": "户用光伏逆变器",
+      "productList": [
+        {
+          "name": "XS 系列",
+          "desc": ["0.7-3kW", "单相", "1 MPPT"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220114/zheng.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=76&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=17&mid=60"
+        },
+        {
+          "name": "DNS 系列",
+          "desc": ["3.6-6kW", "单相", "2 MPPT"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-762.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=69&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=14&mid=60"
+        },
+        {
+          "name": "DNS G3 系列",
+          "desc": ["3.6-6kW", "单相", "2 MPPT"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220225/zheng.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=110&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=109&mid=60"
+        },
+        {
+          "name": "MS 系列",
+          "desc": ["7-10kW", "单相", "3 MPPT"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211230/zheng-979.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=72&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=12&mid=60"
+        },
+        {
+          "name": "MS G3系列",
+          "desc": ["7-10kW", "单相", "2 MPPT"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220801/zheng684-869.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=133&mid=60"
+        },
+        {
+          "name": "SDT G2 系列",
+          "desc": ["5-15kW", "三相", "2 MPPT"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-84.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=97&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=15&mid=60"
+        },
+        {
+          "name": "SDT G2系列",
+          "desc": ["17-25kW", "三相", "2 MPPT"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-551.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=74&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=15&mid=60"
+        }
+      ]
+    },
+    {
+      "typeName": "工商业光伏逆变器",
+      "productList": [
+        {
+          "name": "SMT 系列",
+          "desc": ["25-60kW", "三相", "多路"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-793.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=75&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=16&mid=60"
+        },
+        {
+          "name": "MT G2系列",
+          "desc": ["50-80kW", "三相", "4 MPPT"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-933.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=73&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=13&mid=60"
+        },
+        {
+          "name": "HT系列 1100V",
+          "desc": ["100-136kW", "三相", "多路"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-961.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=70&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=10&mid=60"
+        }
+      ]
+    },
+    {
+      "typeName": "地面光伏逆变器",
+      "productList": [
+        {
+          "name": "HT系列  1500V",
+          "desc": ["225kW", "三相", "多路"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220124/zheng.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=71&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=11&mid=60"
+        }
+      ]
+    },
+    {
+      "typeName": "储能逆变器",
+      "productList": [
+        {
+          "name": "ET 系列",
+          "desc": ["5-10kW", "三相", "双路"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220815/zheng684-457.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=82&mid=60"
+        },
+        {
+          "name": "ESA 系列",
+          "desc": ["5kW", "单相", "双路"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-78.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=83&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=18&mid=60"
+        },
+        {
+          "name": "EM 系列 ",
+          "desc": ["3-5kW", "双向储能"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220815/zheng684-752.png"
+        },
+        {
+          "name": "ETC 系列",
+          "desc": ["50-100kW", "三相"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220105/zheng-740.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=81&mid=60"
+        },
+        {
+          "name": "BTC 系列",
+          "desc": ["50kW", "三相", "高压"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-860.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=77&mid=60"
+        }
+      ]
+    },
+    {
+      "typeName": "电池",
+      "productList": [
+        {
+          "name": "Lynx Home U 系列",
+          "desc": ["5.4-32.4kWh", "低压电池"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-204.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=85&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=20&mid=60"
+        },
+        {
+          "name": "Lynx Home F 系列",
+          "desc": ["6.6-16.4kWh", "高压电池"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220310/zheng-733.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=84&mid=60"
+        }
+      ]
+    },
+    {
+      "typeName": "智慧能源配套产品",
+      "productList": [
+        {
+          "name": "SEMS",
+          "desc": ["安全免费", "智能运维"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220124/zheng-429.png"
+        },
+        {
+          "name": "Smart Meter",
+          "desc": ["智能电表"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-865.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=92&mid=60"
+        },
+        {
+          "name": "Wi-Fi 通讯模块",
+          "desc": ["安全 ", "稳定", "高效"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220125/111.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=93&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=25&mid=60"
+        },
+        {
+          "name": "4G Cat1",
+          "desc": ["安全 ", "稳定", "高效"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220105/zheng.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=86&mid=60"
+        },
+        {
+          "name": "SEC1000",
+          "desc": ["智慧能源控制器"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-157.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=91&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=24&mid=60"
+        },
+        {
+          "name": "SCB2000",
+          "desc": ["光伏通讯箱"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-244.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=89&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=22&mid=60"
+        },
+        {
+          "name": "SCB3000",
+          "desc": ["光伏通讯箱"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-373.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=90&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=23&mid=60"
+        },
+        {
+          "name": "EzLogger Pro",
+          "desc": ["智慧数据采集器"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211229/zheng-517.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=87&mid=60",
+          "userPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=21&mid=60"
+        },
+        {
+          "name": "SCB1000",
+          "desc": ["光伏通讯箱"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20211230/zheng-268.png"
+        }
+      ]
+    },
+    {
+      "typeName": "",
+      "productList": [
+        {
+          "name": "Sunshine 旭日系列",
+          "desc": ["BMT-S1/032A", "92W", "光电建材"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220402/220331_wangzhansuoxutu2-642.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=99&mid=60"
+        },
+        {
+          "name": "Galaxy 银河系列",
+          "desc": ["BMT-G3/088A", "315W", "轻质光电建材"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220726/220726_wangzhan-yinhe-995.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=135&mid=60"
+        },
+        {
+          "name": "Polaris 北极系列",
+          "desc": ["BMT-P1/096A |300W |光电建材"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220401/220331_wangzhansuoxutu4-397.png",
+          "paramPdfUrl": "https://www.goodwe.com/Cn/Skippower/downloadFileF?id=114&mid=60"
+        },
+        {
+          "name": "Starlux 星宇系列",
+          "desc": ["光电建材"],
+          "imgUrl": "https://www.goodwe.com/Public/Uploads/uploadfile/images/20220402/220331_wangzhansuoxutu9-926.png"
+        }
+      ]
+    }
+  ]
+}

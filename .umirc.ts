@@ -8,6 +8,7 @@ export default defineConfig({
     { path: '/', component: '@/pages/index' },
     { path: '/house', component: '@/pages/house/index' },
     { path: '/battery', component: '@/pages/battery/index' },
+    { path: '/battery_goodwe', component: '@/pages/battery_goodwe/index' },
     { path: '/drag_demo', component: '@/pages/drag_demo/index' },
     { path: '/drag_demo2', component: '@/pages/drag_demo2/index' },
     { path: '/roof', component: '@/pages/roof/index' },
